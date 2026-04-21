@@ -205,4 +205,4 @@ ASSET_INJECTION: Dict[str, str] = {
 # 示例:
 #   GitHub: 'https://raw.githubusercontent.com/用户名/仓库/main/restructuring_watchlist.json'
 #   Gitee:  'https://gitee.com/用户名/仓库/raw/main/restructuring_watchlist.json'
-REMOTE_JSON_URL: str = ''
+REMOTE_JSON_URL: str = 'https://raw.githubusercontent.com/Diwild/st-picker-android/main/data/restructuring_watchlist.json'
