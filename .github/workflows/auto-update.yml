@@ -1,0 +1,71 @@
+name: Auto Update Data
+
+on:
+  # 定时触发：每天 15:30 (UTC+8)，仅工作日
+  # UTC 07:30 = 北京时间 15:30
+  schedule:
+    - cron: '30 7 * * 1-5'
+  
+  # 手动触发（测试用）
+  workflow_dispatch:
+    inputs:
+      sync_from_harmony:
+        description: '从鸿蒙版同步数据（需配置 HARMONY_JSON_URL）'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install requests
+      
+      - name: Update data version
+        id: update
+        run: |
+          SYNC_FLAG=""
+          if [ "${{ github.event.inputs.sync_from_harmony }}" = "true" ]; then
+            SYNC_FLAG="--sync-from-harmony"
+          fi
+          python .github/scripts/update_data.py $SYNC_FLAG
+        env:
+          HARMONY_JSON_URL: ${{ vars.HARMONY_JSON_URL }}
+      
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "auto@stpicker.local"
+          git config --local user.name "ST Picker Bot"
+          
+          # 检查是否有变更
+          if git diff --quiet; then
+            echo "✅ 数据无变化，无需提交"
+            exit 0
+          fi
+          
+          # 提交变更
+          VERSION=$(python -c "import json; print(json.load(open('data/restructuring_watchlist.json')).get('data_version',''))")
+          git add data/restructuring_watchlist.json
+          git commit -m "auto: update data ${VERSION}"
+          
+          # 推送
+          git push
+          echo "✅ 已推送更新: ${VERSION}"
