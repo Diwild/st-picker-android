@@ -11631,11 +11631,11 @@
   ],
   "metadata": {
     "version": "1.0",
-    "last_updated": "2026-04-28T09:40:01",
+    "last_updated": "2026-04-29T09:32:22",
     "data_source": "手动维护",
     "notes": "本数据文件包含当前正在重整或重整完成的ST股票信息，数据已通过脚本补全生成",
     "source": "ST重整选股工具 - GitHub Actions 自动更新"
   },
-  "data_version": "2026-04-28T09:40:01",
+  "data_version": "2026-04-29T09:32:22",
   "stock_count": 184
 }
